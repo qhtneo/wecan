@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>어서오고</title>
+  </head>
+  <body>
+    <h1>친구 추가</h1>
+    <form action="../add_friend/" method="post">
+      {% csrf_token %}
+      <ul>
+        <li>이름 : <input type="text" name="friend_name" /></li>
+        <li>나이 : <input type="number" name="friend_age" /></li>
+        <li>
+          친구소개 : <textarea cols="50" rows="3" name="friend_bigo"></textarea>
+        </li>
+        <input type="submit" value="등록" />
+      </ul>
+    </form>
+
+    <h1>create용 폼</h1>
+    <p>여기서 친구 추가하면 create로 저장함</p>
+    <form action="../create_friend/" method="post">
+      {% csrf_token %}
+      <ul>
+        <li>이름 : <input type="text" name="friend_name" /></li>
+        <li>나이 : <input type="number" name="friend_age" /></li>
+        <li>
+          친구소개 : <textarea cols="50" rows="3" name="friend_bigo"></textarea>
+        </li>
+        <input type="submit" value="등록" />
+      </ul>
+    </form>
+  </body>
+</html>

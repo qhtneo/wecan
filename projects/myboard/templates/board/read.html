@@ -1,0 +1,131 @@
+{%extends 'common/base.html'%}
+{%block title%}[글보기]{%endblock title%}
+{%block body%}
+
+  <script>
+    $(document).ready(function () {
+      loadReplyList();
+    });
+
+    function showUpdateForm(param) {
+      location.href = 'update_reply?rid=' + param
+    }
+
+    function loadReplyList() {
+      let bNum = '{{board.id}}';
+      console.log(bNum);
+      $.ajax({
+        url: '/board/load_reply/',
+        type: 'post',
+        headers: {
+          'X-CSRFTOKEN': '{{csrf_token}}'
+        },
+        data: {
+          'id': bNum,
+        },
+        success: function (response) {
+          console.log(JSON.parse(response['response']));
+          let replyList = JSON.parse(response['response']);
+          let str ="";
+          let form ="<textarea></textarea>";
+          $.each(replyList, function (i, item) {
+            let replyContent = item.fields.reply_content;
+            let replyid = item.fields.user;
+            str += replyContent+"&nbsp";
+            str += "<a href='#' onclick='javascript:updateReply(\"" + item.pk + "\")'>수정</a>&nbsp;/";
+            str += "<a href='' onclick='javascript:deleteReply(\"" + item.pk  + "\")'>삭제</a>&nbsp;";
+            str += "<br>";
+          });
+          $("#replyList").html(str);
+          $('#replyForm').html(form);
+        }
+      });
+    }
+    function updateReply(rid){
+      let id = '{{board.id}}'
+      console.log("보드 아이디:",id)
+    }
+    function deleteReply(rid){
+      //location.href='../{{board.id}}/delete_reply/' + data;
+      let id = '{{board.id}}'
+      $.ajax({
+        url: '/board/delete_reply/',
+        type: 'post',
+        headers: {
+          'X-CSRFTOKEN': '{{csrf_token}}'
+        },
+        data: {
+          'id': id,
+          'rid':rid
+        },
+        success:function(data){
+          loadReplyList();
+        }
+      });
+     }
+  </script>
+  <h1>#{{board.id}}</h1>
+  <table>
+    <tr>
+      <th>제목</th>
+      <th>내용</th>
+      <th>작성자</th>
+      <th>조회수</th>
+    </tr>
+    <tr>
+      <td>{{board.title}}</td>
+      <td>{{board.content}}</td>
+      <td>{{board.author.username}}</td>
+      <td>{{board.view_count}}</td>
+    </tr>
+  </table>
+  <!--수정/삭제-->
+  {%if board.author.username == user.username %}
+    <br/>
+    <a href="{%url 'board:update' board.id%}">수정</a>&nbsp;
+    <a href="{%url 'board:delete' board.id%}" onclick="return confirm('정말 삭제 하시겠습니까?')">삭제</a>&nbsp;
+    {%endif%}
+
+
+    <div id="replyArea">
+      <!--댓글 목록 표시할 곳-->
+      <div id="replyList">
+      <!-- board 객체 뿐만 아니라 board와 FK로 엮인 객체는 -->
+      <!--board.모델이름_set으로 가져올 수 있다-->
+      {% comment %} {%if board.reply_set%}
+        {%for reply in board.reply_set.all%}
+          {{reply}}
+          &nbsp;{{reply.user}}
+          &nbsp;{{reply.input_date}}
+          <a href="#" onclick="javascript:showUpdateForm('{{reply.id}}')">수정</a>/
+          <a href="{%url 'board:delete_reply' id=board.id rid=reply.id%}">삭제</a>
+          <!--rid는 해당하는 글의 어떤 댓글 번호를 삭제할지 알려주기 위해 보냄-->
+          <br>
+          {%endfor%}
+          {%else%}
+          <p>등록된 댓글이 없습니다.</p>
+          {%endif%} {% endcomment %}
+        </div>
+        <!--댓글 입력 폼-->
+         <div id="replyForm">
+            {%if not update%}
+            <!--context에 update에 대한 값을 찾지 못했을 때-->
+            <form action="{%url 'board:write_reply' board.id%}" method="post">
+              {%csrf_token%}
+              <textarea name="reply_text" cols="30" rows="1.5">{{reply.reply_content}}</textarea>
+              <input type="submit" value="댓글쓰기">
+            </form>
+            {%else%}
+            <form action="{%url 'board:update_reply' board.id%}" method="post">
+              {%csrf_token%}
+              <input type="hidden" name="rid" value="{{reply.id}}">
+              <textarea name="reply_text" cols="30" rows="1.5">{{reply.reply_content}}</textarea>
+              <input type="submit" value="댓글수정">
+            </form>
+            {%endif%}
+          </div>
+        </div>
+        <!--board.author 는 user하고 비교한다.-->
+        <br/>
+        <a href="../">목록으로</a>
+      {%endblock body%}

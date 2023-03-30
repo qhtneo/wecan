@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내정보</title>
+</head>
+<body>
+    <h1>{{user.username}}님의 페이지입니다.</h1>
+    <form action="{%url 'common:update'%}" method="get">
+        {%csrf_token%}
+        <table border="1">
+            <tr>
+                <th>아이디</th>
+                <td>{{user.username}}</td>
+            </tr>
+            <tr>
+                <th>성</th>
+                <td>{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <th>이름</th>
+                <td>{{user.first_name}}</td>
+            </tr>
+            <tr>
+                <th>
+                    이메일
+                </th>
+                <td>{{user.email}}</td>
+            </tr>
+        </table>
+        <input type="submit" value="정보수정하기">
+    </form>
+    <input type="button" value="회원정보삭제" onclick="javascript:confirmDelete()">
+    <!-- <a href="#" >회원정보삭제</a> -->
+</body>
+</html>

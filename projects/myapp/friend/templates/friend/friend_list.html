@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>친구목록</title>
+    <!--static 파일 불러오기 load static-->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css'%}" />
+  </head>
+  <body>
+    <h1>친구목록</h1>
+    <!-- {{fList}} -->
+    <!--반복해서 출력하려면-->
+    <table>
+      <tr>
+        <td>번호</td>
+        <td>이름</td>
+        <td>나이</td>
+        <td>소개</td>
+        <td>수정/삭제</td>
+      </tr>
+      {%for friend in fList %}
+      <tr>
+        <td>{{friend.id}}</td>
+        <td>{{friend.friend_name}}</td>
+        <td>{{friend.friend_age}}</td>
+        <td>{{friend.friend_bigo}}</td>
+        <td>
+          <a href="../update_friend/{{friend.id}}">수정</a> /
+          <a href="../delete_friend/{{friend.id}}">삭제</a>
+        </td>
+      </tr>
+      {%endfor%}
+    </table>
+    <form action="../find_name/" method="post">
+      {% csrf_token %} 찾을 친구 이름 : <input type="text" name="searchName" />
+      <input type="submit" value="검색" />
+    </form>
+  </body>
+</html>

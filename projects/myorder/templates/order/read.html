@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{order_text}}</title>
+  </head>
+  <body>
+    <h1>{{order_text}}</h1>
+    {% csrf_token %}
+    <h1>제품 번호 {{order.id}}</h1>
+    {%for o in oList%}
+    <p>{{o}}</p>
+    {%endfor%}
+    <table border="1">
+      <tr>
+        <th>제품명</th>
+        <td>{{order.order_text}}</td>
+      </tr>
+      <tr>
+        <th>가격</th>
+        <td>{{order.price}}</td>
+      </tr>
+      <tr>
+        <th>주소</th>
+        <td>{{order.address}}</td>
+      </tr>
+    </table>
+    <!--수정/삭제-->
+    <a href="update/">수정</a> / <a href="delete/">삭제</a>&nbsp;
+    <br />
+    <a href="../">목록으로</a>
+  </body>
+</html>

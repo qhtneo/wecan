@@ -1,0 +1,28 @@
+<!--vs code 에서 . 입력하고 자동완성 하면 비어있는 div 자동완성-->
+<div class="menubar">
+    <table>
+        <tr>    
+            <!--아래의 호출법은 주소를 하드코딩하는것이 아니라 -->
+            <!--urls.py에 정의된 name 속성을 통해서 이동-->
+            <th><a href="/">홈</a>&nbsp;&nbsp;</th>
+            {%if user.is_authenticated%}
+            <th><a href="{%url 'common:logout'%}">로그아웃</a></th>
+            {%else%}
+            <th><a href="{%url 'common:login'%}">로그인</a></th>
+            <th><a href="{%url 'common:signup'%}">회원가입</a>&nbsp;</th>
+            {%endif%}
+            <th><a href="{%url 'board:index' %}">게시판으로 이동</a></th>
+        </tr>
+    </table>
+    
+        
+    
+        
+        
+
+</div>
+<div>
+    {%if user.is_authenticated%}
+    {{user.username}}님 안녕하세요
+    {%endif%}
+</div>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[[글 수정하기]]</title>
+  </head>
+  <body>
+    <h1>[글수정하기]</h1>
+    <!--상위 디렉토리로 이동한 후에 write/호출-->
+    <form action="../../{{order.id}}/update/" method="POST">
+      {% csrf_token %}
+      <table>
+        <tr>
+          <th>제목</th>
+          <td>
+            <input type="text" name="order_text" value="{{order.order_text}}" />
+          </td>
+        </tr>
+        <!--session에 writer가 없으면 해당 tr표시-->
+        <tr>
+          <th>글쓴이</th>
+          <td><input type="text" name="price" value="{{order.price}}" /></td>
+        </tr>
+        <tr>
+          <th>내용</th>
+          <td>
+            <textarea name="address" value="{{order.address}}"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2"><input type="submit" value="수정하기" /></th>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>
