@@ -108,7 +108,7 @@
         </div>
         <!--댓글 입력 폼-->
          <div id="replyForm">
-            {%if not update%}
+            {% comment %} {%if not update%}
             <!--context에 update에 대한 값을 찾지 못했을 때-->
             <form action="{%url 'board:write_reply' board.id%}" method="post">
               {%csrf_token%}
@@ -122,7 +122,7 @@
               <textarea name="reply_text" cols="30" rows="1.5">{{reply.reply_content}}</textarea>
               <input type="submit" value="댓글수정">
             </form>
-            {%endif%}
+            {%endif%} {% endcomment %}
           </div>
         </div>
         <!--board.author 는 user하고 비교한다.-->
