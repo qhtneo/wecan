@@ -186,7 +186,7 @@ def call_ajax(request):
     print('템플릿에서 보낸 데이터', data)
     print(data['txt'])
     print(type(data))
-    return JsonResponse({'result':'ㅊㅋㅊㅋ'})
+    return JsonResponse({'result':'ㅊczㅋㅊㅋ'})
 
 def load_reply(request):
     id = request.POST['id']
