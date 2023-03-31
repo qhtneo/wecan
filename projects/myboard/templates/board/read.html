@@ -3,13 +3,15 @@
 {%block body%}
 
   <script>
+
     $(document).ready(function () {
+      $('#update_reply').hide();
       loadReplyList();
     });
 
     function showUpdateForm(param) {
       location.href = 'update_reply?rid=' + param
-    }
+    } 
 
     function loadReplyList() {
       let bNum = '{{board.id}}';
@@ -27,26 +29,80 @@
           console.log(JSON.parse(response['response']));
           let replyList = JSON.parse(response['response']);
           let str ="";
-          let form ="<textarea></textarea>";
           $.each(replyList, function (i, item) {
             let replyContent = item.fields.reply_content;
             let replyid = item.fields.user;
             str += replyContent+"&nbsp";
-            str += "<a href='#' onclick='javascript:updateReply(\"" + item.pk + "\")'>수정</a>&nbsp;/";
-            str += "<a href='' onclick='javascript:deleteReply(\"" + item.pk  + "\")'>삭제</a>&nbsp;";
+            str += "<a onclick='javascript:updateReply(\"" + replyContent + "\",\"" + item.pk + "\")'>수정</a>&nbsp;/";
+            str += "<a onclick='javascript:deleteReply(\"" + item.pk  + "\")'>삭제</a>&nbsp;";
             str += "<br>";
           });
           $("#replyList").html(str);
-          $('#replyForm').html(form);
+          $('#reply_text').val("");
         }
       });
     }
-    function updateReply(rid){
-      let id = '{{board.id}}'
-      console.log("보드 아이디:",id)
+
+    function updateReply(rt,rid){
+      console.log("댓글 내용:",rt,"댓글 번호:",rid);
+      $.ajax({
+        success:function(){
+          $('#reply_text').val(rt);
+          $('#write_reply').hide();
+          $('#update_reply').show();
+          $('#rid').val(rid);
+        }
+      })
     }
+
+    function updateReply1(){
+      let id = '{{board.id}}';
+      let rt = $('#reply_text').val();
+      let rid = $('#rid').val();
+      console.log(rt,rid)
+
+      $.ajax({
+        url: '/board/update_reply/',
+        type: 'post',
+        headers: {
+          'X-CSRFTOKEN': '{{csrf_token}}'
+        },
+        data: {
+          'id':id,
+          'rid': rid,
+          'rt':rt,
+        },
+        success:function(){
+          $('#reply_text').val("");
+          loadReplyList();
+          $('#write_reply').show();
+          $('#update_reply').hide();
+        }
+      })
+    }
+    function writeReply(){
+      let id = '{{board.id}}';
+      reply_content = $('#reply_text').val();
+      console.log(reply_content);
+      $.ajax({
+        url: '/board/write_reply/',
+        type: 'post',
+        headers: {
+          'X-CSRFTOKEN': '{{csrf_token}}'
+        },
+        data: {
+          'id': id,
+          'reply_content': reply_content
+        },
+        success:function(){
+          loadReplyList();
+          
+        }
+
+      })
+     }
     function deleteReply(rid){
-      //location.href='../{{board.id}}/delete_reply/' + data;
+      //location.href='../{{board.id}}/delete_reply/' + data; 난 사실 잘 몰루.. 
       let id = '{{board.id}}'
       $.ajax({
         url: '/board/delete_reply/',
@@ -63,6 +119,7 @@
         }
       });
      }
+
   </script>
   <h1>#{{board.id}}</h1>
   <table>
@@ -90,42 +147,21 @@
     <div id="replyArea">
       <!--댓글 목록 표시할 곳-->
       <div id="replyList">
-      <!-- board 객체 뿐만 아니라 board와 FK로 엮인 객체는 -->
-      <!--board.모델이름_set으로 가져올 수 있다-->
-      {% comment %} {%if board.reply_set%}
-        {%for reply in board.reply_set.all%}
-          {{reply}}
-          &nbsp;{{reply.user}}
-          &nbsp;{{reply.input_date}}
-          <a href="#" onclick="javascript:showUpdateForm('{{reply.id}}')">수정</a>/
-          <a href="{%url 'board:delete_reply' id=board.id rid=reply.id%}">삭제</a>
-          <!--rid는 해당하는 글의 어떤 댓글 번호를 삭제할지 알려주기 위해 보냄-->
-          <br>
-          {%endfor%}
-          {%else%}
-          <p>등록된 댓글이 없습니다.</p>
-          {%endif%} {% endcomment %}
+        <table>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
         </div>
         <!--댓글 입력 폼-->
          <div id="replyForm">
-            {% comment %} {%if not update%}
-            <!--context에 update에 대한 값을 찾지 못했을 때-->
-            <form action="{%url 'board:write_reply' board.id%}" method="post">
-              {%csrf_token%}
-              <textarea name="reply_text" cols="30" rows="1.5">{{reply.reply_content}}</textarea>
-              <input type="submit" value="댓글쓰기">
-            </form>
-            {%else%}
-            <form action="{%url 'board:update_reply' board.id%}" method="post">
-              {%csrf_token%}
-              <input type="hidden" name="rid" value="{{reply.id}}">
-              <textarea name="reply_text" cols="30" rows="1.5">{{reply.reply_content}}</textarea>
-              <input type="submit" value="댓글수정">
-            </form>
-            {%endif%} {% endcomment %}
+          <input type="hidden" id = "rid">
+          <textarea name="reply_text" id = "reply_text" cols="30" rows="1.5"></textarea>
+          <input type="button" id = "write_reply" value="댓글쓰기" onclick="writeReply()">
+          <input type="button" id = "update_reply" value="댓글수정" onclick="updateReply1()">
           </div>
         </div>
-        <!--board.author 는 user하고 비교한다.-->
         <br/>
         <a href="../">목록으로</a>
       {%endblock body%}
