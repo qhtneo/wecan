@@ -19,7 +19,7 @@ class Board(models.Model):
     def __str__(self):
         return f'{self.id} ~ {self.title}~'
     
-class reply(models.Model):
+class Reply(models.Model):
     # pk : 장고가 알아서 만들어 줄것임
     # 게시글 번호(fk)
     board_obj = models.ForeignKey(Board, on_delete=models.CASCADE)
