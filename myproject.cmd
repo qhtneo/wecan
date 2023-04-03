@@ -1,2 +1,2 @@
-cd c:\django\projects\myboard
-C:/django/venv/venv/Scripts/activate
+cd c:\django\wecan\projects\myboard
+C:/django/wecan/venv/Scripts/activate

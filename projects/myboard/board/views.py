@@ -6,17 +6,14 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 
 from json import loads
-from .models import Board ,reply
+from .models import Board ,Reply
 
 # Create your views here.
 
 def index(request):
-
+    
     result = None # 필터링 된 리스트
     context = {}
-    # return render(request,'board/index.html')
-    # 반환되는 queryset에 대해서 order_by함수 이용하면 특정 필드 기준으로 정렬
-    # order_by에 들어가는 필드 앞에 -를 붙이면 내림차순(desc) 아니면 오름차순
     if 'searchType' in request.GET and 'searchWord' in request.GET:
         search_type = request.GET['searchType'] # get안의 문자열은
         search_word = request.GET['searchWord'] # html의 name속성과 일치해야함
@@ -35,20 +32,9 @@ def index(request):
         context['searchWord'] = search_word
     else: # QueryDict에 검색 조건과 키워드가 없을 때
         result = Board.objects.all()
-
-    # 검색 결과 또는 전체 목록을 id의 내림차순
     result = result.order_by("-id")
-    # board_list = Board.objects.all().order_by('-id')
-
-    # 페이징 넣기
-    # Paginator(목록, 목록에 보여줄 개수)
     paginator = Paginator(result,10)
-    # request.GET.get() -> django의 문법, key를 입력하면 value를 가져와준다, 키값이 존재하지 않으면 디폴트값 None을 리턴한다.
-    # paginator 클래스를 이용해서 자른 목록의 단위에서
-    # 몇번째 단위를 보여줄 것인지 정한다
     page_obj = paginator.get_page(request.GET.get('page'))
-    # context['board_list'] = result
-    # 페이징한 일부 목록을 반환
     context['page_obj'] = page_obj
     return render(request,'board/index.html', context)
 
@@ -56,9 +42,6 @@ def read(request,id):
     print("read실행")
     # board = Board.objects.all()
     board = Board.objects.get(id = id)
-    # 고전적인 방법으로 가져오기
-    # reply_list = reply.objects.filter(board_obj = id).order_by('-id') # 보드가 아이디인것?
-
 
     board.view_count += 1
     board.save()
@@ -84,22 +67,6 @@ def write(request):
         # writer = request.POST['writer'] #??
         content = request.POST['content']
         author = request.user
-
-        # # 현재 세션정보에 writer라는 정보를 취득
-        # session_writer = request.session.get('writer')
-        # if not session_writer: #세션에 정보가 없는 경우
-        #     # 폼에서 가져온 writer값 세션에 저장
-        #     request.session['writer'] = request.POST["writer"]
-
-        # print(session_writer)
-
-        # # board = Board(
-        # #     title = title,
-        # #     writer = writer,
-        # #     content = content
-        # # )
-        # # board.save() #db에 insert
-
         Board.objects.create(
             title = title,
             author = author, # user객체 저장
@@ -141,52 +108,17 @@ def delete(request,id):
     return HttpResponseRedirect('/board/')
 
 #댓글 쓰기
-@login_required(login_url='common:login')
-def write_reply(request,id):
+def write_reply(request):
+    id = request.POST['id']
+    rt = request.POST["reply_content"]
     user = request.user
-    reply_text= request.POST["reply_text"]
-
-    # reply.objects.create( # create함수 썼을때는 .save() 필요없음
-    #     user = user, # 방금 리퀘스트에서 뽑아옴
-    #     reply_content = reply_text,
-    #     board_obj = Board.objects.get(id=id)
-    # )
-
-    #queryset을 이용해 봅시다
-    board = Board.objects.get(id=id) #앞의 id는 pk
+    print(user)
+    board = Board.objects.get(id=id) 
     board.reply_set.create(
-        reply_content = reply_text,
-        user = user
+        user = user,
+        reply_content = rt
     )
-    return HttpResponseRedirect('/board/'+str(id))
-
-
-def update_reply(request,id):
-    if request.method =="GET":
-        rid = request.GET['rid']
-        board=Board.objects.get(id=id)
-        context={
-            'update':'update',
-            'board': board, #id에 해당하는 Board 객체
-            'reply': board.reply_set.get(id=rid) #rid에 해당하는 reply 객체
-        }
-        return render(request,'board/read.html',context)
-    else:
-        rid = request.POST['rid']
-        reply = Board.objects.get(id=id).reply_set.get(id=rid)
-        reply.reply_content = request.POST['reply_text']
-        reply.save()
-        return HttpResponseRedirect('/board/'+str(id))
-
-def call_ajax(request):
-    print("성공한 듯?")
-    # print(request.POST['txt'])
-
-    data = loads(request.body)
-    print('템플릿에서 보낸 데이터', data)
-    print(data['txt'])
-    print(type(data))
-    return JsonResponse({'result':'ㅊczㅋㅊㅋ'})
+    return JsonResponse("",safe=False)
 
 def load_reply(request):
     id = request.POST['id']
@@ -209,3 +141,11 @@ def delete_reply(request):
     rid = request.POST['rid']
     Board.objects.get(id=id).reply_set.get(id=rid).delete()
     return JsonResponse("",safe=False) #딕셔너리 형식으로 보내줘야함
+
+def update_reply(request):
+    id = request.POST['id']
+    rid = request.POST['rid']
+    reply = Board.objects.get(id=id).reply_set.get(id=rid)
+    reply.reply_content = request.POST['rt']
+    reply.save()
+    return JsonResponse("",safe=False)
