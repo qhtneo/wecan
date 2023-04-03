@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-# from board.views import home 
+from django.conf import settings #현재 프로젝트의 settings.py를 의미
+from django.conf.urls.static import static
+# from board.views import home
 
 
 # localhost:8000으로 왔을때 board로 연결하기 위해 views의 home을 import
@@ -23,4 +25,4 @@ urlpatterns = [
     path('',include('common.urls')), #왜 여기 myboard/urls.py에서 작성하는 이유? board/urls.py와의 차이
     path("admin/", admin.site.urls),
     path("board/", include('board.urls')),
-]
+]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
