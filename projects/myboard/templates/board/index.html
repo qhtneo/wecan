@@ -45,7 +45,10 @@
           <!--파라미터가 있는 주소를 호출할 때 -->
           <!--name 뒤에 한칸 띄우고 파라미터의 값 지정-->
           <td>
-            <a href="{%url 'board:detail' board.id%}">{{board.title}}</a>
+            <a href="{%url 'board:detail' board.id%}">{{board.title}}&nbsp<span style = " font-size:0.8em;  color: green;">[{{board.reply_set.all.count}}]</span></a>
+            {%if board.original_file_name%}
+            <img src="/static/attach-file.png" style="width:20px; height:20px; ">
+            {%endif%}
           </td>
           <td>{{board.author}}
             {{board.author_id}}
@@ -60,7 +63,7 @@
     <p>게시물이 존재하지 않습니다.</p>
     {%endif%}
     <form>
-      <select name="searchType" id="">
+      <select name="searchType">
         {% if searchType == 'title'%}
           <option value="title" selected="selected">제목</option>
         {% else %}

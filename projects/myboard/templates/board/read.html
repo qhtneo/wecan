@@ -3,123 +3,143 @@
 {%block body%}
 
   <script>
-   
     $(document).ready(function () {
-      $('#update_reply').hide();
-      loadReplyList();
+      //1.수정 폼 숨기기
+      $('#updateForm').hide();
+      //2.버튼에 이벤트 달기
+      $('#btnWrite').click(function () {
+        writeReply();
+      })
+      $('#btnUpdate').click(function () {
+        updateReply();
+      })
+      // loadReplyList();
+      loadreply();
     });
 
     function showUpdateForm(param) {
-      location.href = 'update_reply?rid=' + param
-    } 
-
-    function loadReplyList() {
-      let bNum = '{{board.id}}';
-      console.log(bNum);
+      // location.href = 'update_reply?rid=' + param
+      $('#writeForm').hide()
+      $('#updateForm').show()
       $.ajax({
-        url: '/board/load_reply/',
-        type: 'post',
-        headers: {
-          'X-CSRFTOKEN': '{{csrf_token}}'
-        },
+        url: '{%url "board:update_reply" id=board.id%}',
+        type: 'get',
         data: {
-          'id': bNum,
+          'rid': param
         },
-        success: function (response) {
-          {% comment %} console.log(JSON.parse(response['response'])); {% endcomment %}
-          let replyList = JSON.parse(response['response']);
-          console.log(replyList)
-          let str ="";
-          $.each(replyList, function (i, item) {
-            let replyContent = item.fields.reply_content;
-            let replyid = item.fields.user;
-            let dateStr = item.fields.input_date.split('T')[0]; // 시간 값에서 날짜 부분만 추출
-            let [year, month, day] = dateStr.split('-'); // 날짜를 년, 월, 일로 분리
-            str += "<span style='display:inline-block;width:240px;'>" + replyContent +"</span>"+ year + "년 " + month + "월 " + day + "일 &nbsp&nbsp&nbsp&nbsp";
-            str += "<a onclick='javascript:getReply(\"" + replyContent + "\",\"" + item.pk + "\")'>수정</a>&nbsp;/";
-            str += "<a onclick='javascript:deleteReply(\"" + item.pk  + "\")'>삭제</a>&nbsp;";
-            str += "<br>";
-          });
-          $("#replyList").html(str);
-          $('#reply_text').val("");
-        }
-      });
-    }
-
-    function getReply(rt,rid){
-      $('#reply_text').val(rt);
-      $('#write_reply').hide();
-      $('#update_reply').show();
-      $('#rid').val(rid);
-    }
-
-    function updateReply(){
-      let id = '{{board.id}}';
-      let rt = $('#reply_text').val();
-      let rid = $('#rid').val();
-      console.log(rt,rid)
-      $.ajax({
-        url: '/board/update_reply/',
-        type: 'post',
-        headers: {
-          'X-CSRFTOKEN': '{{csrf_token}}'
+        success: function (res) {
+          //1. 수정 입력창에 댓글 내용 표시
+          $("#replyTextUpdate").val(res.replyText);
+          //2. rid라는 id를 가진 hidden 태그에 값 설정
+          $("#rid").val(res.rid);
         },
-        data: {
-          'id':id,
-          'rid': rid,
-          'rt':rt,
-        },
-        success:function(){
-          $('#reply_text').val("");
-          loadReplyList();
-          $('#write_reply').show();
-          $('#update_reply').hide();
+        error: function () {
+          alert("안갔음 ㅅㄱ ㅋㅋ");
         }
       })
     }
-    
-    function writeReply(){
-      let id = '{{board.id}}';
-      reply_content = $('#reply_text').val();
+
+    function updateReply() {
+      let replyText = $('#replyTextUpdate').val();
+      let rid = $('#rid').val();
+      let data = {
+        "replyText": replyText,
+        "rid": rid
+      };
       $.ajax({
-        url: '/board/write_reply/',
+        url: '{%url "board:update_reply" id=board.id%}',
         type: 'post',
         headers: {
           'X-CSRFTOKEN': '{{csrf_token}}'
         },
-        data: {
-          'id': id,
-          'reply_content': reply_content
+        data: JSON.stringify(data),
+        // data: {
+        //   'rid': rid,
+        //   'replyText': replyText
+        // },
+        success: function () {
+          loadreply();
+          $('#updateForm').hide();
+          $("#writeForm").show();
+        }
+      })
+    }
+
+    function loadreply() {
+      $.ajax({
+        url: '{% url "board:load_reply" id=board.id %}',
+        type: 'get',
+        success: function (res) {
+          // console.log(res);
+          let str = "<table style='width: 500px;'>";
+          console.log("댓글의 갯수", res.replyList.length);
+          $.each(res.replyList, function (index, item) {
+            let replacedDate = item
+              .inputDate
+              .replace("T", " ")
+              .replace("Z", " ")
+              .split(".")[0]
+            str += "<tr>";
+            str += "<td>" + item.replyText + "</td>";
+            str += "<td style='text-align:center;'>" + item.username + "</td>";
+            str += "<td style='width: 150px;'>" + replacedDate + "</td>";
+            str += "<td style='width: 80px; text-align: center;'>";
+            if ('{{user.username}}' === item.username) {
+              str += "<a href = '#' onclick = 'showUpdateForm(" + item.id + ")'>수정</a>/";
+              str += "<a href = '#' onclick = 'deleteReply(" + item.id + ")'>삭제</a>"
+            }
+            str += "</td>";
+            str += "</tr>";
+
+          });
+
+          str += "</table>";
+
+          $('#replyList').html(str);
+        }
+      })
+    }
+
+    function writeReply() {
+      // let id = '{{board.id}}';
+      replyText = $('#replyTextWrite').val();
+      let data = {
+        "replyText": replyText
+      };
+      $.ajax({
+        url: '{% url "board:write_reply" id=board.id %}',
+        type: 'post',
+        data: JSON.stringify(data),
+        headers: {
+          'X-CSRFTOKEN': '{{csrf_token}}'
         },
-        success:function(){
-          loadReplyList();
+        success: function (res) {
+          $('#replyTextWrite').val("");
+          loadreply();
         },
-        error:function(){
+        error: function () {
           console.log("에러뜸")
         }
       })
-     }
+    }
 
-
-    function deleteReply(rid){
-      //location.href='../{{board.id}}/delete_reply/' + data; 난 사실 잘 몰루.. 
-      let id = '{{board.id}}'
+    function deleteReply(rid) {
+      //location.href='../{{board.id}}/delete_reply/' + data; 난 사실 잘 몰루..
+      let data = {
+        'rid': rid
+      }
       $.ajax({
-        url: '/board/delete_reply/',
+        url: '{%url "board:delete_reply" id=board.id%}',
         type: 'post',
         headers: {
           'X-CSRFTOKEN': '{{csrf_token}}'
         },
-        data: {
-          'id': id,
-          'rid':rid
-        },
-        success:function(data){
-          loadReplyList();
+        data: JSON.stringify(data),
+        success: function (data) {
+          loadreply();
         }
       });
-     }
-
+    }
   </script>
   <h1>#{{board.id}}</h1>
   <table>
@@ -128,34 +148,47 @@
       <th>내용</th>
       <th>작성자</th>
       <th>조회수</th>
+      <th>첨부파일</th>
     </tr>
     <tr>
       <td>{{board.title}}</td>
       <td>{{board.content}}</td>
       <td>{{board.author.username}}</td>
       <td>{{board.view_count}}</td>
-    </tr>
-  </table>
-  <!--수정/삭제-->
-  {%if board.author.username == user.username %}
-    <br/>
-    <a href="{%url 'board:update' board.id%}">수정</a>&nbsp;
-    <a href="{%url 'board:delete' board.id%}" onclick="return confirm('정말 삭제 하시겠습니까?')">삭제</a>&nbsp;
-    {%endif%}
-
-
-    <div id="replyArea">
-      <!--댓글 목록 표시할 곳-->
-      <div id="replyList" >
-        </div>
+      {%if board.original_file_name%}
+        <td colspan='3'>
+          <!--/board/0/download/-->
+          <a href="{%url 'board:download' id=board.id %}">{{board.original_file_name}}</a>
+        </td>
+        {%endif%}
+      </tr>
+    </table>
+    <br><br><br>
+    <!--수정/삭제-->
+    {%if board.author.username == user.username %}
+      <br/>
+      <a href="{%url 'board:update' board.id%}">수정</a>&nbsp;
+      <a href="{%url 'board:delete' board.id%}" onclick="return confirm('정말 삭제 하시겠습니까?')">삭제</a>&nbsp;
+      {%endif%}
+      <hr>
+      <div id="replyArea">
+        <!--댓글 목록 표시할 곳-->
+        <div id="replyList"></div>
         <!--댓글 입력 폼-->
-         <div id="replyForm">
-          <input type="hidden" id = "rid">
-          <textarea name="reply_text" id = "reply_text" cols="30" rows="1.5"></textarea>
-          <input type="button" id = "write_reply" value="댓글쓰기" onclick="writeReply()">
-          <input type="button" id = "update_reply" value="댓글수정" onclick="updateReply()">
+        <div id="replyForm">
+          <div id="writeForm">
+            <!--글쓰기 폼-->
+            <textarea name="reply_text" id="replyTextWrite" cols="30" rows="1.5"></textarea>
+            <input type="button" id="btnWrite" value="댓글쓰기">
+          </div>
+          <div id="updateForm">
+            <!--글 수정 폼-->
+            <input type="hidden" name="rid" id="rid">
+            <textarea name="reply_text" id="replyTextUpdate" cols="30" rows="1.5"></textarea>
+            <input type="button" id="btnUpdate" value="댓글수정">
           </div>
         </div>
-        <br/>
-        <a href="../">목록으로</a>
-      {%endblock body%}
+      </div>
+      <br/>
+      <a href="../">목록으로</a>
+    {%endblock body%}

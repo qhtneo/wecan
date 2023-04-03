@@ -15,10 +15,13 @@ class Board(models.Model):
     #db에는 필드이름 _기본키이름으로 열이 생성됨
     author = models.ForeignKey(User, on_delete = models.CASCADE)
 
+    # 파일첨부 관련 필드
+    attached_file =models.FileField(upload_to='board/%Y-%m-%d/', null = True)
+    original_file_name = models.CharField(max_length=260,null = True)
     # java의 to_string과 비슷함 객체정보를 문자열로 돌려줌
     def __str__(self):
         return f'{self.id} ~ {self.title}~'
-    
+
 class Reply(models.Model):
     # pk : 장고가 알아서 만들어 줄것임
     # 게시글 번호(fk)

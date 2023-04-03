@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
+
     # 이거바꿈
     "board.apps.BoardConfig",
     "common.apps.CommonConfig" # 화면 외 기능을 사용하기 위해 ex)model.py사용
@@ -58,7 +58,7 @@ ROOT_URLCONF = "myboard.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        
+
         # 이거바꿈
         "DIRS": [BASE_DIR/'templates'],
         "APP_DIRS": True,
@@ -102,8 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    }, # 비밀번호 
-    {   
+    }, # 비밀번호
+    {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     }, # 비밀번호
     {
@@ -148,3 +148,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # 로그아웃 성공했을 때 리다이렉트 할 주소
 LOGOUT_REDIRECT_URL = '/'
+
+# 파일 업로드 관련
+MEDIA_ROOT = BASE_DIR / 'media'
+# 파일을 불러올 때 media라는 폴더에서 가져오겠다.
+MEDIA_URL = 'media/'
