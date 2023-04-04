@@ -7,12 +7,12 @@
       //1.수정 폼 숨기기
       $('#updateForm').hide();
       //2.버튼에 이벤트 달기
-      $('#btnWrite').click(function () {
-        writeReply();
-      })
-      $('#btnUpdate').click(function () {
-        updateReply();
-      })
+      /*$('#btnWrite').click(function () {
+          writeReply();
+        })
+        $('#btnUpdate').click(function () {
+          updateReply();
+        })*/
       // loadReplyList();
       loadreply();
     });
@@ -73,6 +73,9 @@
           // console.log(res);
           let str = "<table style='width: 500px;'>";
           console.log("댓글의 갯수", res.replyList.length);
+          if (res.replyList.length == 0) {
+            alert("댓글 없음");
+          }
           $.each(res.replyList, function (index, item) {
             let replacedDate = item
               .inputDate
@@ -179,13 +182,13 @@
           <div id="writeForm">
             <!--글쓰기 폼-->
             <textarea name="reply_text" id="replyTextWrite" cols="30" rows="1.5"></textarea>
-            <input type="button" id="btnWrite" value="댓글쓰기">
+            <input type="button" id="btnWrite" value="댓글쓰기" onclick="return validateReply(this)">
           </div>
           <div id="updateForm">
             <!--글 수정 폼-->
             <input type="hidden" name="rid" id="rid">
             <textarea name="reply_text" id="replyTextUpdate" cols="30" rows="1.5"></textarea>
-            <input type="button" id="btnUpdate" value="댓글수정">
+            <input type="button" id="btnUpdate" value="댓글수정" onclick="return validateReply(this)">
           </div>
         </div>
       </div>

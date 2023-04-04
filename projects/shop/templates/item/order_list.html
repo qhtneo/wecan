@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>주문 명세서</h1>
+    <table border ="1">
+        <tr>
+            <th>주문 제품</th>
+            <th>주문 날짜</th>
+            <th>주문 수량</th>
+        </tr>
+    {%for order in order_list%}
+        <tr>
+            <th>{{order.item.item_name}}</th>
+            <th>{{order.orderdate}}</th>
+            <th>{{order.quantity}}</th>
+        </tr>
+    {%endfor%}
+    </table>
+    <a href="../">뒤로</a>
+</body>
+</html>

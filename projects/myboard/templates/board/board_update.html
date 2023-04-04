@@ -18,12 +18,12 @@
   </script>
   <h1>[글수정하기]</h1>
   <!--상위 디렉토리로 이동한 후에 write/호출-->
-  <form action="{%url 'board:update' board.id%}" method="POST" enctype="multipart/form-data" onsubmit="return validateFile();">
+  <form action="{%url 'board:update' board.id%}" method="POST" enctype="multipart/form-data" onsubmit="return validate()">
     {% csrf_token %}
     <table>
       <tr>
         <th>제목</th>
-        <td><input type="text" name="title" value="{{board.title}}"/></td>
+        <td><input type="text" name="title" value="{{board.title}}" id="title"/></td>
       </tr>
       <!--session에 writer가 없으면 해당 tr표시-->
       <!-- <tr> <th>글쓴이</th> <td><input type="text" name="writer" value="{{board.writer}}" /></td> </tr> -->
@@ -43,7 +43,7 @@
       <tr>
         <th>내용</th>
         <td>
-          <textarea name="content">{{board.content}}</textarea>
+          <textarea name="content" id="content">{{board.content}}</textarea>
         </td>
       </tr>
       <tr>

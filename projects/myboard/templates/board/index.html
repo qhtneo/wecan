@@ -84,8 +84,9 @@
       <input type="submit" value="검색"/>
     </form>
     {% if page_obj.has_previous %}
-      <a href="?page=1">&laquo;</a>
-      <a href="?page={page_obj.previous_page_number}">이전</a>
+    <!--GET의 parameter(쿼리스트링)은 url의 구성요소와 별도로 표시-->
+      <a href="{%url 'board:index' %}?page=1">&laquo;</a> <!--이거 바꾸는 이유가 뭐임-->
+      <a href="{%url 'board:index' %}?page={{page_obj.previous_page_number}}">이전</a> <!--이것도 바꾸는 이유가..?-->
     {% endif %}
     <!--page_obj.number 는 현재 페이지 번호를 의미-->
     <!--num_pages는 전체 페이지 수(paginator로 지정한 보여줄 게시물 수로 나눈 페이지)-->
@@ -108,15 +109,15 @@
             {%endfor%}
             ]
             {%if page_obj.has_next%}
-              <a href="?page={{page_obj.next_page_number}}">다음</a>
-              <a href="?page={{page_obj.paginator.num_pages}}">
+              <a href="{%url 'board:index' %}?page={{page_obj.next_page_number}}">다음</a>
+              <a href="{%url 'board:index' %}?page={{page_obj.paginator.num_pages}}">
                 &raquo;</a>
             {% endif %}<br/>
 
             <!--페이징 2 : 가지고 있는 페이지의 번호 다 보여주기-->
-            <!-- {%for page_number in page_obj.paginator.page_range %} <a href="?page={{page_number}}" >{{page_number}}</a> &nbsp; {%endfor%} <br> -->
+            <!-- {%for page_number in page_obj.paginator.page_range %} <a href="{%url 'board:index' %}?page={{page_number}}" >{{page_number}}</a> &nbsp; {%endfor%} <br> -->
             <!--페이징 3: 2를 개선한 버전-->
-            <!-- {%for page_number in page_obj.paginator.page_range%} {%if page_number >= page_obj.number|add:-5 and page_number <= page_obj.number|add:5%} <a href="?page={{page_number}}">{{page_number}}</a> &nbsp; {%endif%} {%endfor%} -->
+            <!-- {%for page_number in page_obj.paginator.page_range%} {%if page_number >= page_obj.number|add:-5 and page_number <= page_obj.number|add:5%} <a href="{%url 'board:index' %}?page={{page_number}}">{{page_number}}</a> &nbsp; {%endif%} {%endfor%} -->
             <br>
             {%if user.is_authenticated%}
               <a href="{%url 'board:write'%}">글쓰기</a>

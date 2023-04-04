@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[상품수정 시스템]</title>
+  </head>
+
+  <body>
+    <!-- {{items.id}} -->
+    <h1>상품수정 시스템</h1>
+    <form action="{%url 'item:update_item' id=item.id %}" method="POST">
+      {% csrf_token %}
+      <table border="1">
+        <tr>
+          <th>상품명</th>
+          <td>
+            <input
+              type="text"
+              name="item_name"
+              id="item_name"
+              value="{{item.item_name}}"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>수량</th>
+          <td>
+            <input
+              type="number"
+              name="item_count"
+              id="item_count"
+              value="{{item.item_count}}"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th colspan="3">
+            <input type="submit" value="상품등록" />
+          </th>
+        </tr>
+      </table>
+    </form>
+    <a href="../">뒤로</a>
+  </body>
+</html>
