@@ -16,6 +16,7 @@
           <th>#</th>
           <th>제목</th>
           <th>수량</th>
+          <th>수정삭제</th>
         </tr>
         {% for item in item_list %}
           <tr>
@@ -24,6 +25,7 @@
               <a>{{item.item_name}}</a>
             </td>
             <td style="text-align: center;">{{item.item_count}}</td>
+            <td><a href="{%url 'item:update_item' id=item.id%}">수정</a> / <a href="{%url 'item:delete_item' id=item.id%}">삭제</a></td>
           </tr>
         {% endfor %}
       </table>
@@ -32,7 +34,7 @@
       {%endif%}
 
       <form action="../searchItem/">
-        <p>상품 정보 검색</p>
+        <p>상품정보 검색</p>
         <input type="text" name="item_name"/>
         <input type="submit" value="검색"/>
       </form>
