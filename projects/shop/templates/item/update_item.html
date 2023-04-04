@@ -10,7 +10,7 @@
   <body>
     <!-- {{items.id}} -->
     <h1>상품수정 시스템</h1>
-    <form action="{%url 'item:update_item' id=items.id %}" method="POST">
+    <form action="{%url 'item:update_item' id=item.id %}" method="POST">
       {% csrf_token %}
       <table border="1">
         <tr>
@@ -20,7 +20,7 @@
               type="text"
               name="item_name"
               id="item_name"
-              value="{{items.item_name}}"
+              value="{{item.item_name}}"
             />
           </td>
         </tr>
@@ -31,7 +31,7 @@
               type="number"
               name="item_count"
               id="item_count"
-              value="{{items.item_count}}"
+              value="{{item.item_count}}"
             />
           </td>
         </tr>
@@ -42,5 +42,6 @@
         </tr>
       </table>
     </form>
+    <a href="../">뒤로</a>
   </body>
 </html>

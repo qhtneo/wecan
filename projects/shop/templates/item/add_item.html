@@ -10,7 +10,7 @@
 
   <body>
     <h1>상품등록 시스템</h1>
-    <form action="{%url 'item:addItem' %}" method="POST">
+    <form action="{%url 'item:add_item' %}" method="POST">
       {% csrf_token %}
       <table border="1">
         <tr>
@@ -28,7 +28,7 @@
         </tr>
       </table>
     </form>
-
+    <a href="../">뒤로</a>
   </body>
 
 </html>
