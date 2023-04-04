@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>주문 목록</title>
   </head>
+
   <body>
     <h1>주문 목록</h1>
 
@@ -19,34 +21,30 @@
         <!-- <th>수정 / 삭제</th> -->
       </tr>
       {%for order in order_list%}
-      <tr>
-        <td><a href="../{{order.id}}">{{order.id}}</a></td>
-        <td>{{order.order_text}}</td>
-        <td>{{order.price}}</td>
-        <td>{{order.address}}</td>
-        <td>{{order.order_time}}</td>
-        <!-- <td>
-          <a href="../{{order.id}}/update/">수정</a>&nbsp; /<a href="delete/"
-            >삭제</a
-          >&nbsp;
-        </td> -->
-      </tr>
-      {%endfor%}
-    </table>
-    <form action="../search_order/" method="POST">
-      {% csrf_token %}
-      <select name="option">
-        <option value="order">주문 내역</option>
-        <option value="address">주소</option>
-        <option value="front_add">전방 주소</option>
-        <option value="price">가격</option>
-      </select>
-      <input type="text" name="product_name" /><input
-        type="submit"
-        value="검색"
-      />
-    </form>
+        <tr>
+          <td>
+            <a href="../{{order.id}}">{{order.id}}</a>
+          </td>
+          <td>{{order.order_text}}</td>
+          <td>{{order.price}}</td>
+          <td>{{order.address}}</td>
+          <td>{{order.order_time}}</td>
+          <!-- <td> <a href="../{{order.id}}/update/">수정</a>&nbsp; /<a href="delete/" >삭제</a >&nbsp; </td> -->
+        </tr>
+        {%endfor%}
+      </table>
+      <form action="../search_order/" method="POST">
+        {% csrf_token %}
+        <select name="option">
+          <option value="order">주문 내역</option>
+          <option value="address">주소</option>
+          <option value="front_add">전방 주소</option>
+          <option value="price">가격</option>
+        </select>
+        <input type="text" name="product_name"/><input type="submit" value="검색"/>
+      </form>
 
-    <a href="../">뒤로</a>
-  </body>
-</html>
+      <a href="../">뒤로</a>
+    </body>
+
+  </html>

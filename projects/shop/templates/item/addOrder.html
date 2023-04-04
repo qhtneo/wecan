@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script>
+      function chageLangSelect() {
+        let orderSelect = document
+          .getElementById("selectbox")
+          .value;
+        console.log("제품 수량:", orderSelect);
+        $('#itemCount').val(orderSelect + "개");
+        //해당하는 아이디의 상품 재고수량을 출력한다
+
+      }
+    </script>
+    <style>
+      textarea {
+        width: 80%;
+        height: 1.25em;
+        border: none;
+        resize: none;
+      }
+    </style>
+    <title>[주문 등록 페이지]</title>
+  </head>
+
+  <body>
+    <h1>[주문 등록]</h1>
+    <form action="{% url 'item:addOrder' %}" method="POST">
+      <input type="hidden" id="item_id">
+      {% csrf_token %}
+      <table border="1">
+        <tr>
+          <th>상품명</th>
+          <td>
+            <select id="selectbox" onchange="chageLangSelect()" style="width:200px;">
+              {% for item in items %}
+                <option value="{{item.item_count}}">{{item.item_name}}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <th>남은 재고</th>
+          <td>
+            <textarea readonly="readonly" id="itemCount" cols="5" rows="5" style=" font-size:1.5em;"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>주문 수량</th>
+          <td style="width:200px;"><input type="number" name="quantity" id="quantity" style="width:200px;"></td>
+        </tr>
+      </table>
+      <input type="submit" value="상품등록">
+    </form>
+  </body>
+
+</html>
