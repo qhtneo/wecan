@@ -29,4 +29,8 @@ urlpatterns = [
     path('<int:id>/delete_reply/',views.delete_reply, name = "delete_reply"),
     path("<int:id>/download/",views.download, name = "download"),
 
+    # CBV방식으로 호출할 주소 cbv라는 글자가 붙어있으면 호출
+    # as_view : 클래스를 view의 기능으로 사용하겠다.
+    path('cbv/', views.BoardList.as_view()),
+    path('cbv/<int:id>/', views.BoardDetail.as_view()),
 ]
